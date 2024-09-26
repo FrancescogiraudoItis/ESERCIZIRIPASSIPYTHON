@@ -1,17 +1,23 @@
 import socket
-
-server_address = ("192.168.1.126", 12345)
+# Definisco l'indirizzo ip e la porta del server
+server_address = ("192.168.1.126", 12345) #2 dati in tupla, una per l'indirizzo ip, l'altra per la porta
 
 BUFFER_SIZE = 4092; #massima dimensione trasmissibile
 
-udp_server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#creo un socket UDP per la comunicazione
+udp_server_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)# F_INET per IPv4, SOCK_DGRAM per UDP
+
+#collego il socket al server specificato con la funzione bind()
 udp_server_socket.bind(server_address)
-print("ddgghgffd")
-# udp_server_socket.listen(2)
+#La socket ora è in ascolto, aspetta una connessione 
+# la funzione recvfrom() viene utilizzata per ricevere i dati da un client
 data, address = udp_server_socket.recvfrom(BUFFER_SIZE) #mette in ascolto il server
+# Stampo il messaggio ricevuto e l'indirizzo del client
 print (f"messaggio ricevuto: {data.decode('utf-8')} da {address}")
+#decode la stringa ricevuta in modo UTF-8 per poterla visualizzare
 
-
+#inviamo un messaggio di conferma al client
 udp_server_socket.sendto("Messaggio ricevuto!".encode('utf-8'), address)
 
+#chiudo
 udp_server_socket.close()
