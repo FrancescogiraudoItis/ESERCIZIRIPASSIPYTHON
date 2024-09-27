@@ -1,38 +1,32 @@
-import socket
-import threading
+import socket as s
+import threading as t
 
-def handle_server_connection(client_socket):
+SERVER_ADDRESS = ("localhost", 12345)
+BUFFER_SIZE = 4096
+
+def main():
+    client_UDP = s.socket(s.AF_INET, s.SOCK_DGRAM)
+    client_UDP.sendto("connection".encode("utf-8"), SERVER_ADDRESS)
+    thread_invio = t.Thread(target=invio, args=(client_UDP,))
+    thread_ricezione = t.Thread(target=ricezione, args=(client_UDP,))
+    
+    thread_invio.start()
+    thread_ricezione.start()
+
+    thread_invio.join()
+    thread_ricezione.join()
+
+# Funzione per inviare messaggi
+def invio(client_UDP):
     while True:
-        try:
-            # Ricevi il messaggio dal server
-            message = client_socket.recv(1024).decode('utf-8')
-            if not message:
-                print("Il server si è disconnesso.")
-                break
-            print(f"Server: {message}")
-        except:
-            print("Errore nella connessione col server.")
-            break
+        data = input("")
+        client_UDP.sendto(data.encode('utf-8'), SERVER_ADDRESS)
 
-def start_client():
-    client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    client_socket.connect(('localhost', 65432))
-    print("Connesso al server su localhost:65432")
-
-    # Crea un thread per gestire i messaggi in arrivo dal server
-    server_thread = threading.Thread(target=handle_server_connection, args=(client_socket,))
-    server_thread.start()
-
-    # Il client invia messaggi al server
-    try:
-        while True:
-            message = input("Client: ")
-            client_socket.sendall(message.encode('utf-8'))
-            if message.lower() == "exit":
-                break
-    finally:
-        print("Connessione chiusa.")
-        client_socket.close()
+# Funzione per ricevere messaggi
+def ricezione(client_UDP):
+    while True:
+        data, address = client_UDP.recvfrom(BUFFER_SIZE)
+        print(f"Server {address}: {data.decode('utf-8')}")
 
 if __name__ == "__main__":
-    start_client()
+    main()
