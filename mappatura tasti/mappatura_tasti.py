@@ -1,15 +1,14 @@
-from pynput.keyboard import Listener
+import pynput
+from pynput import keyboard
 
-# Funzione che viene chiamata ogni volta che un tasto viene premuto
-def premi(key):
-    try:
-        # Verifica se il tasto premuto è una lettera
-        if key.char.isalpha():
-            print(f'Tasto premuto: {key.char}')
-    except AttributeError:
-        # Ignora altri tasti che non sono lettere
-        pass
+def tasto_premuto(tasto):
+    print(f'Hai premuto il tasto: {tasto}')
 
-# Avvia l'ascoltatore
-with Listener(premio=premi) as listener:
+def tasto_rilasciato(tasto):
+    if tasto == keyboard.Key.esc:
+        print('STOP')
+        return False
+# Avvia il listener
+with keyboard.Listener(on_press=tasto_premuto, on_release=tasto_rilasciato) as listener:
+    print('Premi Esc per uscire.')
     listener.join()
