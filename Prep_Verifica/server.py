@@ -41,7 +41,7 @@ conn.close()
 #INZIO PARTE LEGATA ALLA CONNESSIONE TCP
 
 
-HOST = "192.168.1.127"
+HOST = "127.0.0.1"
 PORT = 6900
 
 def handle_client(conn, addr):
